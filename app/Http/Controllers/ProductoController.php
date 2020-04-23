@@ -22,7 +22,7 @@ class ProductoController extends Controller
         $producto = new Producto();
         $producto->fill($request->all());
         if ($request->imagen) {
-            $producto->imagen=$this->setImage($request);
+            $producto->imagen = $this->setImage($request);
         }
         $producto->save();
         return response()->json($producto, 201);
@@ -43,8 +43,8 @@ class ProductoController extends Controller
         ]);
         $producto = Producto::find($id);
         $producto->fill($request->all());
-        if($request->imagen){
-            $producto->imagen=$this->setImage($request,$producto->imagen);
+        if ($request->imagen && !strpos($request->imagen, '/storage/')) {
+            $producto->imagen = $this->setImage($request, $producto->imagen);
         }
         $producto->save();
         return response()->json($producto, 200);
@@ -52,25 +52,28 @@ class ProductoController extends Controller
     public function  eliminar(Request $request, $id)
     {
         $producto = Producto::find($id);
-        $imageName=$producto->imagen;
-        $imageName=explode('images/',$imageName)[1]; 
-        Storage::delete("images/".$imageName);
+        if ($producto->imagen) {
+            $imageName = $producto->imagen;
+            $imageName = explode('images/', $imageName)[1];
+            Storage::delete("images/" . $imageName);
+        }
         $producto->delete();
         return response()->json($producto, 200);
     }
-    
-    public function setImage($request,$path=null){
-        if($path){
-            $path=explode('images/',$path);
-            Storage::delete("images/".$path[1]);
+
+    public function setImage($request, $path = null)
+    {
+        if ($path) {
+            $path = explode('images/', $path);
+            Storage::delete("images/" . $path[1]);
         }
         $imagen = $request->imagen;
-        $extension = explode(';base64,',$imagen);
+        $extension = explode(';base64,', $imagen);
         $imagen = $extension[1];
-        $extension = explode('/',$extension[0]);
-        $extension=".".$extension[1];
+        $extension = explode('/', $extension[0]);
+        $extension = "." . $extension[1];
         $imagen = str_replace(' ', '+', $imagen);
-        $imageName = uniqid().$extension;
+        $imageName = uniqid() . $extension;
         Storage::put('images/' . $imageName, base64_decode($imagen));
         return 'http://167.71.87.228/storage/images/' . $imageName;
     }
