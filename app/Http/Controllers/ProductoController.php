@@ -72,6 +72,6 @@ class ProductoController extends Controller
         $imagen = str_replace(' ', '+', $imagen);
         $imageName = uniqid().$extension;
         Storage::put('images/' . $imageName, base64_decode($imagen));
-        return 'http://marinaapi.test/storage/images/' . $imageName;
+        return 'http://167.71.87.228/storage/images/' . $imageName;
     }
 }
