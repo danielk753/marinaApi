@@ -20,7 +20,7 @@ class CompraController extends Controller
         return response()->json($tickets,200);
     }
     public function listarNombreAgentes(){
-        $names= DB::select('select id,nombre from Agentes');
+        $names= DB::select('select id,nombre from agentes');
         return response()->json($names,200);
     }
 }
