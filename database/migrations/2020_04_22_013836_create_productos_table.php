@@ -15,8 +15,9 @@ class CreateProductosTable extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo_producto')->nullable(false)->unique();
-            $table->string('descripcion')->nullable(true);
+            $table->string('nombre')->nullable(false);
+            $table->bigInteger('codigo_producto')->nullable(false)->unique();
+            $table->text('descripcion')->nullable(true);
             $table->string('marca')->nullable(true);
             $table->date('fecha_caducidad')->nullable(true);
             $table->string('ubicacion')->nullable(true);
@@ -31,7 +32,7 @@ class CreateProductosTable extends Migration
             $table->float('utilidad_bruta')->nullable(true);
             $table->float('descuento')->nullable(true);
             $table->float('comision')->nullable(true);
-            $table->string('imagen',60)->nullable(true);
+            $table->text('imagen')->nullable(true);
             $table->timestamps();
         });
     }

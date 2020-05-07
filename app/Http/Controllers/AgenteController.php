@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Agente;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,8 @@ class AgenteController extends Controller
         $agentes = Agente::all();
         return response()->json($agentes, 201);
     }
-    public function  almacenar(Request $request)
+
+    public function almacenar(Request $request)
     {
         $this->validate($request, [
             'nombre' => 'required|max:255',
@@ -24,12 +26,14 @@ class AgenteController extends Controller
         $agente->save();
         return response()->json($agente, 201);
     }
-    public function  mostrar(Request $request, $id)
+
+    public function mostrar(Request $request, $id)
     {
-        $cleinte = Agente::find($id);
-        return response()->json($cleinte, 201);
+        $cliente = Agente::find($id);
+        return response()->json($cliente, 201);
     }
-    public function  actualizar(Request $request, $id)
+
+    public function actualizar(Request $request, $id)
     {
         $this->validate($request, [
             'nombre' => 'required|max:255',
@@ -42,7 +46,8 @@ class AgenteController extends Controller
         $agente->save();
         return response()->json($agente, 200);
     }
-    public function  eliminar(Request $request, $id)
+
+    public function eliminar(Request $request, $id)
     {
         $agente = Agente::find($id);
         $agente->delete();

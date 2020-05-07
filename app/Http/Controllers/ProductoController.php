@@ -14,9 +14,12 @@ class ProductoController extends Controller
         $productos = Producto::all();
         return response()->json($productos, 200);
     }
+
     public function  almacenar(Request $request)
     {
+
         $this->validate($request, [
+            'nombre'=>'required',
             'codigo_producto' => 'required|max:255|unique:productos,codigo_producto'
         ]);
         $producto = new Producto();
@@ -27,6 +30,7 @@ class ProductoController extends Controller
         $producto->save();
         return response()->json($producto, 201);
     }
+
     public function  mostrar(Request $request, $id)
     {
         if ($request->isJson()) {
@@ -36,14 +40,16 @@ class ProductoController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
     }
+
     public function  actualizar(Request $request, $id)
     {
         $this->validate($request, [
+            'nombre'=>'required',
             'codigo_producto' => "required|max:255|unique:productos,codigo_producto,$id"
         ]);
         $producto = Producto::find($id);
         $producto->fill($request->all());
-        if ($request->imagen && !strpos($request->imagen, '/storage/')) {
+        if ($request->imagen  && $producto->imagen!=$request->imagen) {
             $producto->imagen = $this->setImage($request, $producto->imagen);
         }
         $producto->save();
@@ -54,8 +60,11 @@ class ProductoController extends Controller
         $producto = Producto::find($id);
         if ($producto->imagen) {
             $imageName = $producto->imagen;
-            $imageName = explode('images/', $imageName)[1];
-            Storage::delete("images/" . $imageName);
+            $imageName = explode('images/', $imageName);
+            //todo: corregir acceso a null
+            if(count($imageName)>1){
+                Storage::delete("images/" . $imageName[1]);
+            }
         }
         $producto->delete();
         return response()->json($producto, 200);
@@ -65,7 +74,9 @@ class ProductoController extends Controller
     {
         if ($path) {
             $path = explode('images/', $path);
-            Storage::delete("images/" . $path[1]);
+            if(count($path)>1){
+                Storage::delete("images/" . $path[1]);
+            }
         }
         $imagen = $request->imagen;
         $extension = explode(';base64,', $imagen);
