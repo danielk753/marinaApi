@@ -36,4 +36,4 @@ Route::put('/api/agentes/{id}', ['uses' => 'AgenteController@actualizar']);
 Route::delete('/api/agentes/{id}', ['uses' => 'AgenteController@eliminar']);
 
 Route::get('/api/tickets', 'CompraController@listarTickets');
-Route::get('/api/tickets/nombresAgentes', 'CompraController@listarNombreAgentes');
+Route::get('tickets/nombresAgentes', 'CompraController@listarNombreAgentes');
