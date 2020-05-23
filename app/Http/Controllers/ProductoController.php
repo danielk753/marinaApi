@@ -9,17 +9,16 @@ use Illuminate\Support\Facades\Storage;
 class ProductoController extends Controller
 {
 
-    public function listar(Request $request)
+    public function listar()
     {
         $productos = Producto::all();
         return response()->json($productos, 200);
     }
 
-    public function  almacenar(Request $request)
+    public function almacenar(Request $request)
     {
-
         $this->validate($request, [
-            'nombre'=>'required',
+            'nombre' => 'required',
             'codigo_producto' => 'required|max:255|unique:productos,codigo_producto'
         ]);
         $producto = new Producto();
@@ -31,38 +30,33 @@ class ProductoController extends Controller
         return response()->json($producto, 201);
     }
 
-    public function  mostrar(Request $request, $id)
+    public function mostrar(Request $request, Producto $producto)
     {
-        if ($request->isJson()) {
-            $producto = Producto::find($id);
-            return response()->json($producto, 201);
-        } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        return response()->json($producto, 201);
+
     }
 
-    public function  actualizar(Request $request, $id)
+    public function actualizar(Request $request, Producto $producto)
     {
         $this->validate($request, [
-            'nombre'=>'required',
-            'codigo_producto' => "required|max:255|unique:productos,codigo_producto,$id"
+            'nombre' => 'required',
+            'codigo_producto' => "required|max:255|unique:productos,codigo_producto,$producto->id"
         ]);
-        $producto = Producto::find($id);
         $producto->fill($request->all());
-        if ($request->imagen  && $producto->imagen!=$request->imagen) {
+        if ($request->imagen && $producto->imagen != $request->imagen) {
             $producto->imagen = $this->setImage($request, $producto->imagen);
         }
         $producto->save();
         return response()->json($producto, 200);
     }
-    public function  eliminar(Request $request, $id)
+
+    public function eliminar(Request $request, Producto $producto)
     {
-        $producto = Producto::find($id);
         if ($producto->imagen) {
             $imageName = $producto->imagen;
             $imageName = explode('images/', $imageName);
             //todo: corregir acceso a null
-            if(count($imageName)>1){
+            if (count($imageName) > 1) {
                 Storage::delete("images/" . $imageName[1]);
             }
         }
@@ -74,7 +68,7 @@ class ProductoController extends Controller
     {
         if ($path) {
             $path = explode('images/', $path);
-            if(count($path)>1){
+            if (count($path) > 1) {
                 Storage::delete("images/" . $path[1]);
             }
         }

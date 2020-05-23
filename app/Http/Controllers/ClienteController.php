@@ -6,11 +6,12 @@ use Illuminate\Http\Request;
 
 class ClienteController extends Controller
 {
-    public function listar(Request $request)
+    public function listar()
     {
         $clientes = Cliente::all();
         return response()->json($clientes, 200);
     }
+
     public function  almacenar(Request $request)
     {
         $this->validate($request, [
@@ -20,31 +21,30 @@ class ClienteController extends Controller
             "direccion" => "max:255"
         ]);
         $cliente = new Cliente();
-        $cliente->fill($request->json()->all());
+        $cliente->fill($request->all());
         $cliente->save();
         return response()->json($cliente, 201);
     }
-    public function  mostrar(Request $request, $id)
+
+    public function  mostrar(Request $request,Cliente $cliente)
     {
-        $cleinte = Cliente::find($id);
-        return response()->json($cleinte, 201);
+        return response()->json($cliente, 201);
     }
-    public function  actualizar(Request $request, $id)
+
+    public function  actualizar(Request $request, Cliente $cliente)
     {
         $this->validate($request, [
             'nombre' => 'required|max:255',
-            "correo" => "unique:agentes,correo,$id|max:255",
-            "telefono" => "required|integer|unique:agentes,telefono,$id|digits_between:1,20",
+            "correo" => "unique:agentes,correo,$cliente->id|max:255",
+            "telefono" => "required|integer|unique:agentes,telefono,$cliente->id|digits_between:1,20",
             "direccion" => "max:255"
         ]);
-        $cliente = Cliente::find($id);
         $cliente->fill($request->all());
         $cliente->save();
         return response()->json($cliente, 200);
     }
-    public function  eliminar(Request $request, $id)
+    public function  eliminar(Request $request, Cliente $cliente)
     {
-        $cliente = Cliente::find($id);
         $cliente->delete();
         return response()->json($cliente, 200);
     }

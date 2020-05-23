@@ -7,12 +7,18 @@ use Illuminate\Http\Request;
 
 class AgenteController extends Controller
 {
-    public function listar(Request $request)
+    public function listar()
     {
         $agentes = Agente::all();
         return response()->json($agentes, 201);
     }
 
+    /*
+    * Almacenar una proveedor
+    *
+    * @param Request $request
+    * @return Response
+    */
     public function almacenar(Request $request)
     {
         $this->validate($request, [
@@ -27,30 +33,27 @@ class AgenteController extends Controller
         return response()->json($agente, 201);
     }
 
-    public function mostrar(Request $request, $id)
-    {
-        $cliente = Agente::find($id);
-        return response()->json($cliente, 201);
-    }
-
-    public function actualizar(Request $request, $id)
+    public function actualizar(Request $request, Agente $agente)
     {
         $this->validate($request, [
             'nombre' => 'required|max:255',
-            "correo" => "unique:agentes,correo,$id|max:255",
-            "telefono" => "required|integer|unique:agentes,telefono,$id|digits_between:1,20",
+            "correo" => "unique:agentes,correo,$agente->id|max:255",
+            "telefono" => "required|integer|unique:agentes,telefono,$agente->id|digits_between:1,20",
             "direccion" => "max:255"
         ]);
-        $agente = Agente::find($id);
         $agente->fill($request->all());
         $agente->save();
         return response()->json($agente, 200);
     }
 
-    public function eliminar(Request $request, $id)
+    public function eliminar(Request $request, Agente $agente)
     {
-        $agente = Agente::find($id);
         $agente->delete();
         return response()->json($agente, 200);
     }
+
+//    public function mostrar(Request $request, $agente)
+//    {
+//        return response()->json($agente, 201);
+//    }
 }
