@@ -56,3 +56,8 @@ Route::get('/api/venta/getClientes', 'VentaController@getClientes');
 Route::get('/api/venta/getTicket/{ticketsventa}', 'VentaController@getTicket');
 Route::post('/api/venta/updateCliente', 'VentaController@updateCliente');
 
+Route::get('/api/eventos/getEventos', 'VentaController@getEventos');
+Route::get('/api/eventos/getMes', 'VentaController@getMes');
+Route::get('/api/eventos/getTablas', 'VentaController@getTablas');
+
+

@@ -19,7 +19,8 @@ class ProductoController extends Controller
     {
         $this->validate($request, [
             'nombre' => 'required',
-            'codigo_producto' => 'required|max:255|unique:productos,codigo_producto'
+            'codigo_producto' => 'required|max:255|unique:productos,codigo_producto',
+            'fecha_caducidad' => 'required'
         ]);
         $producto = new Producto();
         $producto->fill($request->all());

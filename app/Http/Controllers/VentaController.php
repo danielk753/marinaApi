@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Cliente;
+use App\Producto;
+use App\Ticket;
 use App\Ticketsventa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -71,4 +73,46 @@ class VentaController extends Controller
 
         return response()->json($ticketsventa, 200);
     }
+
+    public function getEventos()
+    {
+        $eventos = [];
+        $productos = Producto::count();
+        if ($productos) {
+            $productos = Producto::where('visible', true)->get();
+            foreach ($productos as $producto) {
+                $evento['title'] = "Caduca el producto " . $producto->codigo_producto . " " . $producto->nombre;
+                $evento['color'] = 'red';
+                $evento['date'] = $producto->fecha_caducidad;
+                $eventos[] = $evento;
+            }
+        }
+        $tickets = Ticket::count();
+        if ($tickets) {
+            $tickets = Ticket::all();
+            foreach ($tickets as $ticket) {
+                $evento['title'] = "Entrega de productos comprados con id " . $ticket->id . " del proveedor " . $ticket->agente->nombre;
+                $evento['color'] = 'aquamarine';
+                $evento['date'] = $ticket->fecha_entrega;
+                $eventos[] = $evento;
+            }
+        }
+        return response()->json($eventos, 200);
+    }
+
+    public function getMes()
+    {
+        $meses = DB::select("SELECT SUM(total)AS total,MONTH(created_at) AS 'mes' FROM ticketsventas WHERE YEAR(created_at) ='2020' GROUP BY MONTH(created_at)");
+        return response()->json($meses, 200);
+    }
+
+    public function getTablas()
+    {
+        $clientes = DB::select("SELECT c.nombre, COUNT(*) AS 'total' FROM ticketsventas t JOIN clientes c ON t.cliente_id = c.id GROUP BY c.nombre ORDER BY total DESC  LIMIT 5 ");
+        $productos = DB::select("SELECT SUM(total)AS total, p.nombre  FROM ventas v JOIN productos p ON p.id =v.producto_id GROUP BY producto_id ORDER BY total DESC LIMIT 5");
+        $tablas['clientes'] = $clientes;
+        $tablas['productos'] = $productos;
+        return response()->json($tablas, 200);
+    }
+
 }
