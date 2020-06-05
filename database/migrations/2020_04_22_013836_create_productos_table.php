@@ -33,6 +33,7 @@ class CreateProductosTable extends Migration
             $table->float('descuento')->nullable(true);
             $table->float('comision')->nullable(true);
             $table->text('imagen')->nullable(true);
+            $table->boolean('visible')->default(true);
             $table->timestamps();
         });
     }

@@ -11,7 +11,7 @@ class ProductoController extends Controller
 
     public function listar()
     {
-        $productos = Producto::all();
+        $productos = Producto::where('visible', true)->get();
         return response()->json($productos, 200);
     }
 
@@ -60,7 +60,9 @@ class ProductoController extends Controller
                 Storage::delete("images/" . $imageName[1]);
             }
         }
-        $producto->delete();
+//        $producto->delete();
+        $producto->visible = false;
+        $producto->save();
         return response()->json($producto, 200);
     }
 

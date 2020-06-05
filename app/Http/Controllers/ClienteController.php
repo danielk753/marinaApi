@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Cliente;
 use Illuminate\Http\Request;
 
@@ -8,11 +9,11 @@ class ClienteController extends Controller
 {
     public function listar()
     {
-        $clientes = Cliente::all();
+        $clientes = Cliente::where('visible', true)->get();
         return response()->json($clientes, 200);
     }
 
-    public function  almacenar(Request $request)
+    public function almacenar(Request $request)
     {
         $this->validate($request, [
             'nombre' => 'required|max:255',
@@ -26,12 +27,12 @@ class ClienteController extends Controller
         return response()->json($cliente, 201);
     }
 
-    public function  mostrar(Request $request,Cliente $cliente)
+    public function mostrar(Request $request, Cliente $cliente)
     {
         return response()->json($cliente, 201);
     }
 
-    public function  actualizar(Request $request, Cliente $cliente)
+    public function actualizar(Request $request, Cliente $cliente)
     {
         $this->validate($request, [
             'nombre' => 'required|max:255',
@@ -43,9 +44,11 @@ class ClienteController extends Controller
         $cliente->save();
         return response()->json($cliente, 200);
     }
-    public function  eliminar(Request $request, Cliente $cliente)
+
+    public function eliminar(Request $request, Cliente $cliente)
     {
-        $cliente->delete();
+        $cliente->visible = false;
+        $cliente->save();
         return response()->json($cliente, 200);
     }
 }

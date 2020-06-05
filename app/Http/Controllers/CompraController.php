@@ -22,15 +22,15 @@ class CompraController extends Controller
 
     public function listarNombreAgentes()
     {
-        $names = DB::select('SELECT id, nombre FROM agentes ORDER BY nombre ASC');
+        $names = DB::select('SELECT id, nombre FROM agentes WHERE visible IS true ORDER BY nombre ASC');
         return response()->json($names, 200);
 
     }
 
     public function listarproductosForAdd()
     {
-        $productos = DB::select('SELECT CONCAT(codigo_producto,\' - \',nombre,\' - \',presentacion,\' - \',unidad_medida) as descripcion,
-                    id, iva, costo, (costo-iva) as subototal FROM productos');
+        $productos = DB::select('SELECT CONCAT(codigo_producto,\' - \',nombre) as descripcion,
+                    id, iva, costo, (costo-iva) as subototal FROM productos WHERE visible IS true');
         return response()->json($productos, 200);
     }
 
@@ -90,15 +90,17 @@ class CompraController extends Controller
         $ticketToSend = $ticket->getAttributes();
         $ticketToSend['productos'] = [];
         foreach ($ticket->compras as $compra) {
-            $producto['descripcion'] = $compra->producto->codigo_producto . ' - ' . $compra->producto->nombre . ' - ' . $compra->producto->presentacion . ' - ' . $compra->producto->unidad_medida;
+            $producto['descripcion'] = $compra->producto->codigo_producto . ' - ' . $compra->producto->nombre;
             $producto['id'] = $compra->producto->id;
-            $producto['iva'] = $compra->producto->iva;
+            $producto['iva'] = $compra->iva;
             $producto['costo'] = $compra->total;
             $producto['subtotal'] = $compra->subtotal;
             $producto['cantidad'] = $compra->cantidad_unitaria;
             $producto['id_compra'] = $compra->id;
+            $producto['visible'] = $compra->producto->visible;
             $ticketToSend['productos'][] = $producto;
         }
+        $ticketToSend['agente'] = $ticket->agente;
         $ticketToSend['factura'] = $ticket->numero_factura;
         $ticketToSend['aplicar'] = $ticket->aplicado;
         return response($ticketToSend, 200);
@@ -153,6 +155,9 @@ class CompraController extends Controller
                 DB::table('compras')->where('id', '=', $idDelete)->delete();
             }
             foreach ($request->productos as $producto) {
+                if ($request->aplicar) {
+                    DB::update("UPDATE productos SET stock_actual = stock_actual+" . $producto['cantidad'] . " where id= " . $producto['id'] . "; ");
+                }
                 if (!isset($producto['id_compra'])) {
                     DB::table('compras')->insert([
                         'subtotal' => $producto['subtotal'],

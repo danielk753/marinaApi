@@ -13,4 +13,9 @@ class Cliente extends Model
     protected $hidden = [
         'password',
     ];
+
+    public function ticketsventas()
+    {
+        return $this->hasMany('App\Ticketsventa');
+    }
 }

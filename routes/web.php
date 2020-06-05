@@ -46,4 +46,13 @@ Route::get('/api/tickets/getCompra/{ticket}', 'CompraController@getCompra');
 Route::post('/api/tickets/updateCompra', 'CompraController@updateCompra');
 Route::delete('/api/tickets/{ticket}', 'CompraController@deleTicket');
 
+Route::get('/api/caja/getProductos', 'CajaController@getProductos');
+Route::post('/api/caja/setVenta', 'CajaController@setVenta');
+Route::get('/api/caja/getClientes', 'CajaController@getClientes');
+
+Route::get('/api/venta/getVentas', 'VentaController@getVentas');
+Route::post('/api/venta/deleteVenta', 'VentaController@deleteVenta');
+Route::get('/api/venta/getClientes', 'VentaController@getClientes');
+Route::get('/api/venta/getTicket/{ticketsventa}', 'VentaController@getTicket');
+Route::post('/api/venta/updateCliente', 'VentaController@updateCliente');
 

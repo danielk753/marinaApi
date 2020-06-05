@@ -9,7 +9,7 @@ class AgenteController extends Controller
 {
     public function listar()
     {
-        $agentes = Agente::all();
+        $agentes = Agente::where('visible',true)->get();
         return response()->json($agentes, 201);
     }
 
@@ -48,7 +48,8 @@ class AgenteController extends Controller
 
     public function eliminar(Request $request, Agente $agente)
     {
-        $agente->delete();
+        $agente->visible = false;
+        $agente->save();
         return response()->json($agente, 200);
     }
 

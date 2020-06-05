@@ -19,6 +19,7 @@ class CreateAgentesTable extends Migration
             $table->string('direccion')->nullable(true);
             $table->string('correo')->nullable(true)->unique();
             $table->bigInteger('telefono')->nullable(false)->unique();
+            $table->boolean('visible')->default(true);
             $table->timestamps();
         });
     }
